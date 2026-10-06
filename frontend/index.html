@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1220">
+  <title>Kafka Calculator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">Σ</div>
+        <div>
+          <div class="brand-title">Kafka Calculator</div>
+          <div class="brand-subtitle">Fast calculations. Clean history.</div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <div id="apiStatus" class="status-pill status-checking"><span class="status-dot"></span><span>Checking API</span></div>
+        <button id="logoutBtn" class="ghost-btn hidden">Logout</button>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <section id="authView" class="auth-layout">
+        <div class="hero-copy">
+          <span class="eyebrow">MODERN CALCULATION WORKSPACE</span>
+          <h1>Simple on the surface.<br><span>Built for real services.</span></h1>
+          <p>Sign in to calculate, track your history, and keep your workspace tied to your account.</p>
+          <div class="feature-row">
+            <div class="mini-feature"><span>01</span><div><strong>Instant math</strong><small>Four core operations</small></div></div>
+            <div class="mini-feature"><span>02</span><div><strong>Private history</strong><small>Account-scoped records</small></div></div>
+            <div class="mini-feature"><span>03</span><div><strong>Live API</strong><small>REST-backed interface</small></div></div>
+          </div>
+        </div>
+
+        <div class="auth-card card">
+          <div class="auth-tabs">
+            <button class="auth-tab active" data-auth-tab="login">Sign in</button>
+            <button class="auth-tab" data-auth-tab="register">Create account</button>
+          </div>
+
+          <div id="loginPanel" class="auth-panel">
+            <h2>Welcome back</h2>
+            <p class="muted">Use your account to access the calculator.</p>
+            <form id="loginForm" novalidate>
+              <label>Username<input id="loginUsername" type="text" autocomplete="username" maxlength="100" required placeholder="your username"></label>
+              <label>Password<div class="password-wrap"><input id="loginPassword" type="password" autocomplete="current-password" required placeholder="your password"><button type="button" class="toggle-password" data-target="loginPassword">Show</button></div></label>
+              <button class="primary-btn full" type="submit"><span>Sign in</span><span class="btn-spinner hidden"></span></button>
+            </form>
+          </div>
+
+          <div id="registerPanel" class="auth-panel hidden">
+            <h2>Create your workspace</h2>
+            <p class="muted">Your public alias is generated automatically.</p>
+            <form id="registerForm" novalidate>
+              <label>Username<input id="registerUsername" type="text" autocomplete="username" maxlength="100" required placeholder="choose a username"></label>
+              <label>Password<div class="password-wrap"><input id="registerPassword" type="password" autocomplete="new-password" required placeholder="at least 8 characters"><button type="button" class="toggle-password" data-target="registerPassword">Show</button></div></label>
+              <label>Confirm password<div class="password-wrap"><input id="registerConfirm" type="password" autocomplete="new-password" required placeholder="repeat your password"><button type="button" class="toggle-password" data-target="registerConfirm">Show</button></div></label>
+              <button class="primary-btn full" type="submit"><span>Create account</span><span class="btn-spinner hidden"></span></button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section id="workspaceView" class="workspace hidden">
+        <div class="workspace-heading">
+          <div>
+            <span class="eyebrow">CALCULATION WORKSPACE</span>
+            <h1>Good to see you, <span id="aliasName">user</span>.</h1>
+          </div>
+          <div class="date-chip" id="todayLabel"></div>
+        </div>
+
+        <div class="dashboard-grid">
+          <section class="calculator-card card">
+            <div class="section-heading">
+              <div><h2>Calculator</h2><p class="muted">Enter two values and choose an operation.</p></div>
+              <button id="clearCalcBtn" class="text-btn">Clear</button>
+            </div>
+
+            <div class="display-panel">
+              <div id="expressionLabel" class="display-expression">Ready for a calculation</div>
+              <div id="resultDisplay" class="display-result">0</div>
+            </div>
+
+            <form id="calcForm">
+              <div class="number-grid">
+                <label>A<input id="calcA" type="number" step="any" inputmode="decimal" placeholder="0"></label>
+                <label>B<input id="calcB" type="number" step="any" inputmode="decimal" placeholder="0"></label>
+              </div>
+              <div class="operation-grid" role="group" aria-label="Operation">
+                <button type="button" class="operation-btn active" data-operation="add"><span>+</span><small>Add</small></button>
+                <button type="button" class="operation-btn" data-operation="subtract"><span>−</span><small>Subtract</small></button>
+                <button type="button" class="operation-btn" data-operation="multiply"><span>×</span><small>Multiply</small></button>
+                <button type="button" class="operation-btn" data-operation="divide"><span>÷</span><small>Divide</small></button>
+              </div>
+              <button class="primary-btn calculate-btn" type="submit"><span>Calculate</span><span class="btn-spinner hidden"></span></button>
+            </form>
+          </section>
+
+          <section class="history-card card">
+            <div class="section-heading">
+              <div><h2>Recent history</h2><p class="muted">Your latest calculations, newest first.</p></div>
+              <button
+    id="deleteHistoryBtn"
+    type="button"
+    class="secondary-button"
+>
+    Delete History
+</button>
+              <button id="refreshHistoryBtn" class="icon-btn" title="Refresh history" aria-label="Refresh history">↻</button>
+            </div>
+            
+            <div id="historyList" class="history-list">
+              <div class="empty-state"><div class="empty-icon">∑</div><strong>No calculations yet</strong><span>Run your first calculation to see it here.</span></div>
+            </div>
+          </section>
+        </div>
+
+        <section class="info-strip">
+          <div class="info-item"><span class="info-icon">↯</span><div><strong>Authenticated</strong><small>Your access token secures this workspace.</small></div></div>
+          <div class="info-item"><span class="info-icon">◫</span><div><strong>History protected</strong><small>Only your account's calculations are shown.</small></div></div>
+          <div class="info-item"><span class="info-icon">◎</span><div><strong>API connected</strong><small>Frontend requests go through the API handler.</small></div></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div id="toastRoot" class="toast-root" aria-live="polite"></div>
+  <script src="app.js" defer></script>
+</body>
+</html>
